@@ -2,27 +2,30 @@
 
 import java.util.*;
 
-class Graph<T> {
+class Graph{
 
     // We use Hashmap to store the edges in the graph
-    private final Map<T, List<T> > map = new HashMap<>();
-
+    private final Map<String, List<String> > map = new HashMap<>();
+    private final List<Edge> edges = new LinkedList<>();
     // This function adds a new vertex to the graph
-    public void addVertex(T s) {
-        map.put(s, new LinkedList<T>());
+    public void addVertex(String s) {
+        map.put(s, new LinkedList<String>());
     }
 
     // This function adds the edge between source to destination
-    public void addEdge(T source, T destination) {
+    public void addEdge(String source, String destination, int weight) {
         if (!map.containsKey(source))
             addVertex(source);
         if (!map.containsKey(destination))
             addVertex(destination);
         map.get(source).add(destination);
         map.get(destination).add(source);
+        Edge e = new Edge(source, destination, weight);
+        if(!edges.contains(e))
+            edges.add(e);
     }
 
-    List<T> getAdjVertices(T s) {
+    List<String> getAdjVertices(String s) {
         return map.get(s);
     }
 
@@ -34,31 +37,39 @@ class Graph<T> {
     // This function gives the count of edges
     public int getEdgesCount(){
         int count = 0;
-        for (T v : map.keySet()) {
+        for (String v : map.keySet()) {
             count += map.get(v).size();
         }
         return count/2;
     }
 
+    public int getEdgeCost(String s, String d){
+        for(Edge e: edges){
+            if(s.equals(e.getSource()) && d.equals(e.getDestination()))
+                return e.getCost();
+        }
+        return -1;
+    }
+
     // This function gives whether a vertex is present or not.
-    public boolean hasVertex(T s) {
+    public boolean hasVertex(String s) {
         return (map.containsKey(s));
     }
 
     // This function gives whether an edge is present or not.
-    public boolean hasEdge(T s, T d) {
+    public boolean hasEdge(String s, String d) {
         return (map.get(s).contains(d));
     }
 
-    // Prints the adjancency list of each vertex.
+    // Prints the adjacency list of each vertex.
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
 
-        for (T v : map.keySet()) {
-            builder.append(v.toString()).append(": ");
-            for (T w : map.get(v)) {
-                builder.append(w.toString()).append(" ");
+        for (String v : map.keySet()) {
+            builder.append(v).append(": ");
+            for (String w : map.get(v)) {
+                builder.append(w).append(" ");
             }
             builder.append("\n");
         }
